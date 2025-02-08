@@ -3,8 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Passion+One:wght@400;700&display=swap" rel="stylesheet">
     <title>Valentine's Proposal</title>
     <style>
+
+        .passion-one-regular {
+        font-family: "Passion One", serif;
+        font-weight: 400;
+        font-style: normal;
+        }
+
+        .passion-one-bold {
+        font-family: "Passion One", serif;
+        font-weight: 700;
+        font-style: normal;
+        }
+
+
+
         html, body {
             display: flex;
             flex-direction: column;
@@ -13,26 +31,36 @@
             width: 100%;
             height: 100%;
             margin: 0;
-            font-family: sans-serif;
-            background-color: #ffe6e6;
+            font-family: "Passion One", serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            background-color: #ffe0e0;
+            overflow: hidden;
         }
 
         .gif-container {
             width: 300px;
             height: 300px;
             margin: 20px auto;
-            background-color: #fff;
+            background-color: #ffffff00;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        .gif-container.accepted {
+            transform: scale(1.2);
+            margin: 0;
         }
 
         .question {
             font-size: 24px;
             margin: 20px 0;
             color: #ff4d4d;
+            transition: all 0.5s ease;
+            visibility: hidden;
         }
 
         button {
@@ -42,13 +70,14 @@
             border-radius: 4px;
             color: #fff;
             user-select: none;
-            font-size: 1rem;
+            font-size: 2rem;
             transform-style: preserve-3d;
         }
 
         #yesBtn {
             background-color: #ff4d4d;
             margin-right: 20px;
+            transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
 
         #yesBtn:hover {
@@ -57,6 +86,7 @@
 
         #noBtn {
             background-color: #ff8080;
+            z-index: 1;
         }
 
         #noBtn:before,
@@ -88,16 +118,51 @@
             justify-content: center;
             align-items: center;
             margin-top: 20px;
+            transition: all 0.5s ease;
+        }
+
+        /* Animation classes */
+        .hide {
+            opacity: 0;
+            transform: scale(0);
+            pointer-events: none;
+        }
+
+        .zoom-out {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .new-gif-container {
+            position: fixed;
+            width: 80vmin;
+            height: 80vmin;
+            max-width: 600px;
+            max-height: 600px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        .new-gif-container.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .new-gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the GIF fills the box */
         }
     </style>
 </head>
 <body>
     <div class="gif-container">
-        <img src="/api/placeholder/300/300" alt="Valentine's GIF placeholder">
+        <img src="./cat2.gif" alt="Valentine's GIF placeholder">
     </div>
     
     <div class="question">
-        Hi <span id="name"></span>, will you be my Valentine?
+        Hey <span id="name"></span>, will you be my Valentine?
     </div>
 
     <div class="buttons-container">
@@ -107,15 +172,26 @@
         </div>
     </div>
 
+    <div class="new-gif-container">
+        <img src="./celebration.gif" alt="Celebration GIF placeholder">
+    </div>
+
     <script>
-        // Get name from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const name = urlParams.get('name') || 'there';
+        const name = urlParams.get('name') || 'Cutiee';
         document.getElementById('name').textContent = name;
 
         function handleResponse(response) {
             if (response === 'yes') {
-                alert('Yay! 💖');
+                // Hide original elements with zoom animation
+                document.querySelector('.gif-container').classList.add('zoom-out');
+                document.querySelector('.question').classList.add('hide');
+                document.querySelector('.buttons-container').classList.add('hide');
+                
+                // Show new GIF container after a slight delay
+                setTimeout(() => {
+                    document.querySelector('.new-gif-container').classList.add('show');
+                }, 500);
             }
         }
 
